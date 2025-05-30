@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
+    <script src="https://admin.tago.io/dist/custom-widget.min.js"></script>
+    <link rel="stylesheet" href="https://admin.tago.io/dist/custom-widget.min.css"/>
+    <title>My TagoIO Widget</title>
+
+    <style>
+        body { font-family: sans-serif; margin: 1em; }
+        plot { width: 700px; height: 500px; }
+    </style>
+</head>
+<body>
+    <h1>Real-time “location” Values</h1>
+    <div id="plot"></div>
+
+    <div id="tester" style="width:600px;height:250px;"></div>
+    <script>
+        const x_coords = [];
+        const y_coords = [];
+        const z_coords = [];
+
+        window.TagoIO.ready();
+
+        window.TagoIO.onStart((widget) => {
+            window.widget = widget
+            const parameters = widget?.display.parameters;
+        });
+
+        window.TagoIO.onRealtime((data) => {
+            const data_records = (trace || []).flatMap(bucket => bucket.result || []);
+
+            const locations = data_records.filter(r => r.variable === "location");
+
+            locations.forEach(xyz => {
+                const z = xyz.value;
+                const y = (xyz.metadata?.y * 410.0 - 5) / 100.0;
+                const x = (xyz.metadata?.x * 610.0 - 5) / 100.0;
+
+                if (x != null && y != null && z != null) {
+                    x_coords.push(x);
+                    y_coords.push(y);
+                    z_coords.push(z);
+                }
+            });
+
+            const trace = {
+                x : x_coords,
+                y : y_coords,
+                z : z_coords,
+                type : "mesh3d",
+                // intensity : z_coords
+            };
+
+            Plotly.react("plot", [trace], {
+                margin: { l:0, r:0, b:0, t:0 } <!--Left, Right, Bottom, Top margins-->
+            });
+        });
+    </script>
+</body>
+</html>
+

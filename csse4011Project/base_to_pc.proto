@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+enum ReturnType {
+  UNDEFINED = 0;
+  COORDS = 1;
+  OBSTACLE = 2;
+  TILT = 3;
+  HEIGHT = 4;
+}
+
+message Coordinates {
+  float x = 1;
+  float y = 2;
+}
+
+message SentData {
+  oneof data {
+    Coordinates coords = 1;
+    float obstacle = 2;
+    float tilt = 3;
+    float height = 4;
+  }
+}
