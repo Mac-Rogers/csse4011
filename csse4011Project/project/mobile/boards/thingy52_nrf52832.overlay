@@ -1,0 +1,20 @@
+/ {
+    aliases {
+        led = &led0;
+        led2 = &led1;
+        led3 = &led2;
+        rtc = &rtc2;
+        p-sensor = &lps22hb_press;
+        pwm = &pwm0;
+        acc = &lis2dh12;
+        mygpio = &gpio0;
+    };
+};
+
+&gpio0 {
+    status = "okay";
+};
+
+&rtc2 {
+    status = "okay";
+};
